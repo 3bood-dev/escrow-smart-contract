@@ -25,5 +25,18 @@ contract EscrowTest is Test {
         vm.assertFalse(escrow.sellerApproved());
         vm.assertFalse(escrow.isDisputeRaised());
     }
+    // ══════════════════════════════════════════════════
+    // approveByBuyer
+    // ══════════════════════════════════════════════════
     
+    function test_Revert_approveByBuyer()public {
+        vm.prank(seller);
+        vm.expectRevert(Escrow.Escrow__OnlyBuyer.selector);
+        escrow.approveByBuyer();
+    }
+    function test_approveByBuyer()public {
+        vm.prank(buyer);
+        escrow.approveByBuyer();
+        assertTrue(escrow.buyerApproved());
+    }
 }

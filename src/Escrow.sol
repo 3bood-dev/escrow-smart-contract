@@ -29,6 +29,18 @@ contract Escrow {
         amount = msg.value;
     }
 
+    function approveByBuyer() external {
+        if (msg.sender != buyer) revert Escrow__OnlyBuyer();
+        buyerApproved = true;
+        raiseIfAgreed();
+    }
+
+    function approveBySeller() external {
+        if (msg.sender != seller) revert Escrow__OnlySeller();
+        sellerApproved = true;
+        raiseIfAgreed();
+    }
+
     function resolveDispute(bool _approveForSeller) external {
         if (msg.sender != arbiter) revert Escrow__OnlyArbiter();
         if (!isDisputeRaised) revert Escrow__NoDisputeRaised();
@@ -40,18 +52,6 @@ contract Escrow {
             (bool success,) = payable(buyer).call{value: amount}("");
             if (!success) revert Escrow__ReleaseFundsFailed();
         }
-    }
-
-    function approveByBuyer() external {
-        if (msg.sender != buyer) revert Escrow__OnlyBuyer();
-        buyerApproved = true;
-        raiseIfAgreed();
-    }
-
-    function approveBySeller() external {
-        if (msg.sender != seller) revert Escrow__OnlySeller();
-        sellerApproved = true;
-        raiseIfAgreed();
     }
 
     function raiseIfAgreed() internal {
