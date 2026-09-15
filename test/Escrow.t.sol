@@ -4,8 +4,11 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {Escrow} from "../src/Escrow.sol";
 
+/// @dev this contract is just simulation to a bad senario that 
+///      if the seller was a contract that dosnt have a receive 
+///      function or fallback function 
 contract RejectEther{
-
+        // empty contract just for testing senario
 }
 
 contract EscrowTest is Test {
@@ -133,5 +136,23 @@ contract EscrowTest is Test {
         assertEq(address(badEscrow).balance, AMOUNT);
         assertEq(badSeller.balance, 0);
     }
+    // ══════════════════════════════════════════════════
+    //raiseDispute
+    // ══════════════════════════════════════════════════
     
+    function test_revert_raiseDispute_onlyBuyerOrSeller()public {
+        vm.prank(arbiter);
+        vm.expectRevert(Escrow.Escrow__OnlyBuyerOrSeller.selector);
+        escrow.raiseDispute();
+    }
+    function test_raiseDispute_byBuyer()public {
+        vm.prank(buyer);
+        escrow.raiseDispute();
+        assertTrue(escrow.isDisputeRaised());
+    }
+    function test_raiseDispute_bySeller()public {
+        vm.prank(seller);
+        escrow.raiseDispute();
+        assertTrue(escrow.isDisputeRaised());
+    }
 }
