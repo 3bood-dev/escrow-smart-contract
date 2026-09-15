@@ -6,10 +6,14 @@ import {Escrow} from "../src/Escrow.sol";
 
 contract EscrowTest is Test {
     Escrow public escrow;
+    address public buyer = makeAddr("buyer");
+    address public seller = makeAddr("seller");
+    address public arbitur = makeAddr("arbitur");
 
-    // function setUp() public {
-    //     escrow = new Escrow();
-    // }
+    uint256 public AMOUNT = 1 ether;
+    function setUp() public {
+        escrow = new Escrow{value: AMOUNT}(buyer, seller, arbitur);
+    }
 
     
 }
