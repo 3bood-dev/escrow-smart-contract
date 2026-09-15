@@ -38,6 +38,8 @@ contract EscrowTest is Test {
         vm.prank(buyer);
         escrow.approveByBuyer();
         assertTrue(escrow.buyerApproved());
+        assertEq(address(escrow).balance, AMOUNT);
+        assertEq(seller.balance, 0);
     }
      // ══════════════════════════════════════════════════
     // approveBySeller
@@ -51,6 +53,8 @@ contract EscrowTest is Test {
         vm.prank(seller);
         escrow.approveBySeller();
         assertTrue(escrow.sellerApproved());
+         assertEq(address(escrow).balance, AMOUNT);
+        assertEq(seller.balance, 0);
     }
 
 }
