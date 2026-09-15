@@ -90,5 +90,27 @@ contract EscrowTest is Test {
         assertEq(seller.balance, sellerBalanceBefore + AMOUNT);
         assertEq(address(escrow).balance, 0);
     }
+    // ══════════════════════════════════════════════════
+    // raiseDispute
+    // ══════════════════════════════════════════════════
+    function test_raiseDispute_noRelease_normalSenario()public {
+        uint256 sellerBalanceBefore = seller.balance;
+
+        vm.prank(buyer);
+        escrow.approveByBuyer();
+
+        vm.prank(buyer);
+        escrow.raiseDispute();
+
+        vm.prank(seller);
+        escrow.approveBySeller();
+
+        assertTrue(escrow.buyerApproved());
+        assertTrue(escrow.sellerApproved());
+        assertTrue(escrow.isDisputeRaised());
+        assertEq(address(escrow).balance, AMOUNT);
+        assertEq(seller.balance, sellerBalanceBefore);
+
+    }
     
 }

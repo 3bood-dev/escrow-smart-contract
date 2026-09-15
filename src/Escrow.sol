@@ -63,7 +63,7 @@ contract Escrow {
 
     function raiseDispute() external {
         // require(msg.sender == buyer || msg.sender == seller, "only buyer or seller can raise dispute");
-        if (msg.sender != buyer || msg.sender != seller) revert Escrow__OnlyBuyerOrSeller();
+        if (msg.sender != buyer && msg.sender != seller) revert Escrow__OnlyBuyerOrSeller();
         isDisputeRaised = true;
     }
 }
