@@ -74,5 +74,21 @@ contract EscrowTest is Test {
         assertEq(seller.balance, sellerBalanceBefore + AMOUNT);
         assertEq(address(escrow).balance, 0);
     }
+
+    function test_raiseIfAgreed_whenSellerApproveThenBuyer()public {
+        uint256 sellerBalanceBefore = seller.balance;
+
+        vm.prank(seller);
+        escrow.approveBySeller();
+
+        assertEq(seller.balance, 0);
+        assertEq(address(escrow).balance, AMOUNT);
+
+        vm.prank(buyer);
+        escrow.approveByBuyer();
+
+        assertEq(seller.balance, sellerBalanceBefore + AMOUNT);
+        assertEq(address(escrow).balance, 0);
+    }
     
 }
