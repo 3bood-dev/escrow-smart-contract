@@ -4,6 +4,10 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {Escrow} from "../src/Escrow.sol";
 
+contract RejectEther{
+
+}
+
 contract EscrowTest is Test {
     Escrow public escrow;
     address public buyer = makeAddr("buyer");
@@ -111,6 +115,23 @@ contract EscrowTest is Test {
         assertEq(address(escrow).balance, AMOUNT);
         assertEq(seller.balance, sellerBalanceBefore);
 
+    }
+
+    function test_revert_whenSellerIsContractThatDoesntHaveReceiveOrFallbackFunction()public {
+        RejectEther badContract = new RejectEther();
+        address badSeller = address(badContract);
+
+        Escrow badEscrow = new Escrow{value : AMOUNT}(buyer, badSeller, arbiter);
+
+        vm.prank(buyer);
+        badEscrow.approveByBuyer();
+
+        vm.prank(badSeller);
+        vm.expectRevert(Escrow.Escrow__ReleaseFundsFailed.selector);
+        badEscrow.approveBySeller();
+
+        assertEq(address(badEscrow).balance, AMOUNT);
+        assertEq(badSeller.balance, 0);
     }
     
 }
