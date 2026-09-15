@@ -39,4 +39,18 @@ contract EscrowTest is Test {
         escrow.approveByBuyer();
         assertTrue(escrow.buyerApproved());
     }
+     // ══════════════════════════════════════════════════
+    // approveBySeller
+    // ══════════════════════════════════════════════════
+     function test_Revert_approveBySeller()public {
+        vm.prank(buyer);
+        vm.expectRevert(Escrow.Escrow__OnlySeller.selector);
+        escrow.approveBySeller();
+    }
+    function test_approveBySeller()public {
+        vm.prank(seller);
+        escrow.approveBySeller();
+        assertTrue(escrow.sellerApproved());
+    }
+
 }
