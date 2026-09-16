@@ -155,4 +155,22 @@ contract EscrowTest is Test {
         escrow.raiseDispute();
         assertTrue(escrow.isDisputeRaised());
     }
+    // ══════════════════════════════════════════════════
+    //resolveDispute
+    // ══════════════════════════════════════════════════
+    
+    function test_revert_resolveDispute_ifNotArbiter()public {
+        vm.prank(buyer);
+        escrow.raiseDispute();
+
+        vm.prank(buyer);
+        vm.expectRevert(Escrow.Escrow__OnlyArbiter.selector);
+        escrow.resolveDispute(false);
+    }
+
+    function test_revert_resolveDispute_ifNoDisputeRaised()public {
+        vm.prank(arbiter);
+        vm.expectRevert(Escrow.Escrow__NoDisputeRaised.selector);
+        escrow.resolveDispute(true);
+    }
 }
