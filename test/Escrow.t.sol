@@ -167,10 +167,41 @@ contract EscrowTest is Test {
         vm.expectRevert(Escrow.Escrow__OnlyArbiter.selector);
         escrow.resolveDispute(false);
     }
-
     function test_revert_resolveDispute_ifNoDisputeRaised()public {
         vm.prank(arbiter);
         vm.expectRevert(Escrow.Escrow__NoDisputeRaised.selector);
         escrow.resolveDispute(true);
     }
+    //normal senario
+    function test_resolveDispute_ifBuyer()public {
+        uint256 buyerBalanceBefore = buyer.balance;
+        uint256 sellerBalanceBefore = seller.balance;
+
+        vm.prank(buyer);
+        escrow.raiseDispute();
+
+        vm.prank(arbiter);
+        escrow.resolveDispute(false);
+
+        assertEq(address(escrow).balance, 0);
+        assertEq(buyer.balance, buyerBalanceBefore + AMOUNT);
+        assertEq(seller.balance, sellerBalanceBefore);
+
+    }
+
+    function test_resolveDispute_ifSeller()public {
+        uint256 buyerBalanceBefore = buyer.balance;
+        uint256 sellerBalanceBefore = seller.balance;
+
+        vm.prank(buyer);
+        escrow.raiseDispute();
+
+        vm.prank(arbiter);
+        escrow.resolveDispute(true);
+
+        assertEq(address(escrow).balance, 0);
+        assertEq(buyer.balance, buyerBalanceBefore );
+        assertEq(seller.balance, sellerBalanceBefore + AMOUNT);
+    }
+
 }
